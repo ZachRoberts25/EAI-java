@@ -1,52 +1,96 @@
 package javaprogram;
+
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
+//import java.io.IOException;
+//import java.util.ArrayList;
+//import java.util.Arrays;
+//import java.util.List;
+//
+//import org.jsoup.Jsoup;
+//import org.jsoup.nodes.Document;
+//import org.jsoup.nodes.Element;
 public class main {
-
-	public static void main(String[] args) throws IOException  {
-		for(int i = 0; i < websiteCrawler(35).toArray().length; i++){
-			System.out.println(websiteCrawler(35).toArray()[i]);
-		}
-	}
 	
-	public static List<String> websiteCrawler(int numberOfWebsites) throws IOException{
-		List<String> new_array = new ArrayList<String>();
-		if(numberOfWebsites < 26){
-		Document doc = Jsoup.connect("http://www.alexa.com/topsites/global;0").get();
-		Element body = doc.body();
-		String[] array = body.select("p.desc-paragraph").select("a[href]").text().split(" ");
-		String[] smallerArray = Arrays.copyOfRange(array, 0, numberOfWebsites);
-		for(int i = 0; i < smallerArray.length; i++){
-			new_array.add(smallerArray[i]);
-		}
-		}else{
-			List<String> new_array1 = new ArrayList<String>();
-			double numberOfPages = Math.ceil((numberOfWebsites / 25.0));
-			for(int i = 0; i < numberOfPages; i++){
-				Document doc = Jsoup.connect("http://www.alexa.com/topsites/global;" + i).get();
-				Element body = doc.body();
-				String[] array = body.select("p.desc-paragraph").select("a[href]").text().split(" ");
-				for(int x=0; x < array.length; x++){
-					new_array1.add(array[x]);
-				}
-			}
-			String[] arr1 = {}; 
-			arr1 = new_array1.toArray(arr1); 
-			String[] arr = Arrays.copyOfRange(arr1, 0, numberOfWebsites);
-			
-			for(int i=0; i < arr.length; i++){
-				new_array.add(arr[i]);
-			}
-		}
-		
-		return new_array;
-		
+	public static void main(String[] args) {
+		System.out.println(websiteCrawler(48));
+    }	
+
+public static List<String> websiteCrawler(int numberOfWebsites){
+	List<String> list = new ArrayList<String>();
+	URL url;
+
+	try {
+	    // get URL content
+
+	    String a="http://www.alexa.com/topsites/global;";
+	    if(numberOfWebsites < 26){
+	    	a += 0;
+		    url = new URL(a);
+		    URLConnection conn = url.openConnection();
+		    // open the stream and put it into BufferedReader
+		    BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+		    String inputLine;
+		    List<String> list1 = new ArrayList<String>();
+		    while ((inputLine = br.readLine()) != null) {
+		        if(inputLine.contains("<li class=\"site-listing\">")){ 
+		        	String[] string = inputLine.split("<a href=\"/siteinfo/");
+		        	String[] string1 = string[1].split("\">");
+		        	list1.add(string1[0]);
+		        }
+		    }
+		    for(int i = 0; i < numberOfWebsites; i++){
+		    	list.add(list1.get(i));
+		    }
+		    br.close();
+	    	
+	    }else{
+	    	double numberOfPages = Math.ceil((numberOfWebsites / 25.0));
+	    	List<String> list1 = new ArrayList<String>();
+	    	for(int i = 0; i < numberOfPages; i++){
+	    		a += i;
+	    		url = new URL(a);
+			    URLConnection conn = url.openConnection();
+			    // open the stream and put it into BufferedReader
+			    BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			    String inputLine;
+			    while ((inputLine = br.readLine()) != null) {
+			    	if(inputLine.contains("<li class=\"site-listing\">")){ 
+			        	String[] string = inputLine.split("<a href=\"/siteinfo/");
+			        	String[] string1 = string[1].split("\">");
+			        	list1.add(string1[0]);
+			    	}
+			    }
+			 br.close();
+	    	}
+	        for(int i = 0; i < numberOfWebsites; i++){
+		    	list.add(list1.get(i));
+		    }
+	    }
+
+//	    System.out.println("Done");
+
+	} catch (MalformedURLException e) {
+	    e.printStackTrace();
+	} catch (IOException e) {
+	    e.printStackTrace();
 	}
+	return list;
 	
 }
+
+}
+
+
+
+
+
+
