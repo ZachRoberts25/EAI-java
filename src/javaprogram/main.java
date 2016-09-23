@@ -1,5 +1,4 @@
 package javaprogram;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,30 +8,20 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-//import java.io.IOException;
-//import java.util.ArrayList;
-//import java.util.Arrays;
-//import java.util.List;
-//
-//import org.jsoup.Jsoup;
-//import org.jsoup.nodes.Document;
-//import org.jsoup.nodes.Element;
 public class main {
-	
 	public static void main(String[] args) {
-		System.out.println(websiteCrawler(48));
+		System.out.println(websiteCrawler(22));
     }	
-
 public static List<String> websiteCrawler(int numberOfWebsites){
 	List<String> list = new ArrayList<String>();
 	URL url;
-
 	try {
 	    // get URL content
-
 	    String a="http://www.alexa.com/topsites/global;";
-	    if(numberOfWebsites < 26){
+	    if(numberOfWebsites <= 0){
+	    	return null;
+	    }
+	    else if(numberOfWebsites < 26){
 	    	a += 0;
 		    url = new URL(a);
 		    URLConnection conn = url.openConnection();
@@ -75,18 +64,13 @@ public static List<String> websiteCrawler(int numberOfWebsites){
 		    	list.add(list1.get(i));
 		    }
 	    }
-
-//	    System.out.println("Done");
-
 	} catch (MalformedURLException e) {
 	    e.printStackTrace();
 	} catch (IOException e) {
 	    e.printStackTrace();
 	}
 	return list;
-	
 }
-
 }
 
 
